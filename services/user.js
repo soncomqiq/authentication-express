@@ -11,27 +11,13 @@ module.exports = (app, db) => {
         console.error(info.message)
         res.status(403).send(info.message)
       } else {
-        const data = {
+        user.update({
           name: req.body.name,
-          username: user.username,
           role: "user"
-        };
-        db.user.findOne({
-          where: { username: data.username }
         })
-          .then(user => {
-            user.update({
-              name: data.name,
-              role: data.role
-            })
-              .then(() => {
-                console.log('user created in db')
-                res.status(200).send({ message: 'user created' })
-              })
-              .catch(err => {
-                console.error(err)
-                res.status(400).send({ message: err.message })
-              })
+          .then(() => {
+            console.log('user created in db')
+            res.status(200).send({ message: 'user created' })
           })
           .catch(err => {
             console.error(err)
