@@ -20,7 +20,6 @@ passport.use('register', new localStrategy(
     session: false,
   },
   (username, password, done) => {
-    console.log("inside passport")
     db.user.findOne({
       where: { username: username }
     }).then(user => {
@@ -44,3 +43,29 @@ passport.use('register', new localStrategy(
     })
   }
 ))
+
+passport.use('login', new localStrategy(
+  {
+    usernameField: 'username',
+    passwordField: 'password',
+    session: false,
+  }, async (username, password, done) => {
+    let user = await db.user.findOne({ where: { username } })
+    if (user === null) {
+      return done(null, false, { message: 'username or password is incorrect.' })
+    }
+    bcrypt.compare(password, user.password, function (err, response) {
+      if (err) {
+        console.error(err)
+        done(err)
+      }
+      if (!response) {
+        return done(null, false, { message: 'username or password is incorrect.' })
+      }
+      console.log(`user ${user.id} is found  & authenticated`)
+      return done(null, user)
+    })
+  }
+))
+
+module.exports = jwtOptions
