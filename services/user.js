@@ -47,4 +47,10 @@ module.exports = (app, db) => {
       }
     })(req, res, next)
   })
+
+  app.get('/protected-route', passport.authenticate('jwt', { session: false }),
+    function (req, res) {
+      res.status(200).send(req.user)
+    }
+  )
 }

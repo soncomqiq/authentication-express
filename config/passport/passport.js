@@ -6,7 +6,7 @@ const BCRYPT_SALT_ROUNDS = config.salt_length
 
 const passport = require('passport')
 const localStrategy = require('passport-local').Strategy
-const jwtStrategy = require('passport-jwt').Strategy
+const JWTStrategy = require('passport-jwt').Strategy
 const extractJwt = require('passport-jwt').ExtractJwt
 const db = require('../../models')
 
@@ -67,5 +67,24 @@ passport.use('login', new localStrategy(
     })
   }
 ))
+
+const opts = {
+  jwtFromRequest: extractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: jwtOptions.secretOrKey
+}
+
+passport.use('jwt', new JWTStrategy(opts, (jwt_payload, done) => {
+  console.log({ jwt_payload })
+  db.user.findOne({ where: { id: jwt_payload.id } })
+    .then(user => {
+      if (user) {
+        console.log("user found")
+        done(null, user)
+      } else {
+        console.log("user is not found")
+        done(null, false)
+      }
+    })
+}))
 
 module.exports = jwtOptions
