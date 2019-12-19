@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const db = require('./models')
 const userService = require('./services/user')
 const postService = require('./services/post')
+const cors = require('cors')
 
 const app = express()
 
@@ -11,7 +12,7 @@ const passport = require('passport')
 
 // use the strategy
 app.use(passport.initialize())
-
+app.use(cors())
 // parse application/json
 app.use(bodyParser.json());
 // parse application/x-www-form-urlencoded

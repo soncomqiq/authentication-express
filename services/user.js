@@ -35,7 +35,11 @@ module.exports = (app, db) => {
       }
       if (info !== undefined) {
         console.error(info.message)
-        res.status(400).send(info.message)
+        if (info.message === "username or password is incorrect.") {
+          res.status(401).send({ message: info.message })
+        } else {
+          res.status(400).send(info.message)
+        }
       } else {
         const token = jwt.sign({ id: user.id, role: user.role, name: user.name },
           jwtOptions.secretOrKey, { expiresIn: 3600 })

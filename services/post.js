@@ -20,4 +20,17 @@ module.exports = (app, db) => {
     }
   )
 
+  app.get('/post-list', passport.authenticate('jwt',
+    { session: false }),
+    function (req, res) {
+      db.post.findAll({ where: { user_id: req.user.id } })
+        .then(result => {
+          res.status(200).send(result)
+        })
+        .catch(err => {
+          console.error(err);
+          res.status(400).send({ message: err.message })
+        })
+    })
+
 }
